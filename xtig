@@ -1,0 +1,58 @@
+#!/bin/sh
+
+xtig_help() {
+    echo "Usage:"
+    echo "    xtig           Show commit logs from last HEAD"
+    echo "    xtig today     Show today's commit logs"
+    echo "    xtig yesterday Show yesterday's commit logs"
+    echo "    xtig week      Show commit logs from a week ago"
+    echo "    xtig help      Show this message"
+}
+
+pull_command() {
+    if git config --get-regexp "^svn-remote" 2>&1 > /dev/null; then
+        echo "svn rebase"
+    else
+        echo "pull"
+    fi
+}
+
+
+if ! tig -h 2>&1 > /dev/null; then
+    echo "Xtig needs tig. Please install."
+    exit
+fi
+
+if ! git rev-parse 2> /dev/null; then
+    echo "Not a git repository"
+    exit
+fi
+
+OPTION=""
+if [ $# -lt 1 ]; then
+    ORG_SHA1=`git show --quiet --pretty=format:"%H" HEAD | tr -d '\n'`
+    OPTION="$ORG_SHA1..HEAD"
+else
+    case $1 in
+        "today" )
+            FROM_DATE=`date -v '-1d' '+%F' | tr -d '\n'`
+            OPTION="--after=\"$FROM_DATE\""
+        ;;
+        "yesterday" )
+            FROM_DATE=`date -v '-2d' '+%F' | tr -d '\n'`
+            TO_DATE=`date -v '-1d' '+%F' | tr -d '\n'`
+            OPTION="--after=\"$FROM_DATE\" --before=\"$TO_DATE\""
+        ;;
+        "week" )
+            FROM_DATE=`date -v '-7d' '+%F' | tr -d '\n'`
+            OPTION="--after=\"$FROM_DATE\""
+        ;;
+        * )
+            xtig_help
+            exit
+        ;;
+    esac
+fi
+
+git `pull_command`
+tig $OPTION

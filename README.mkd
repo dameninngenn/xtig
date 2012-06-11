@@ -1,0 +1,11 @@
+xtig
+========
+
+Usage:
+--------
+    xtig           Show commit logs from last HEAD
+    xtig today     Show today's commit logs
+    xtig yesterday Show yesterday's commit logs
+    xtig week      Show commit logs from a week ago
+    xtig help      Show this message
+
