@@ -10,7 +10,7 @@ xtig_help() {
 }
 
 pull_command() {
-    if git config --get-regexp "^svn-remote" 2>&1 > /dev/null; then
+    if git config --get-regexp "^svn-remote" > /dev/null 2>&1; then
         echo "svn rebase"
     else
         echo "pull"
@@ -18,7 +18,7 @@ pull_command() {
 }
 
 
-if ! tig -h 2>&1 > /dev/null; then
+if ! tig -h > /dev/null 2>&1; then
     echo "Xtig needs tig. Please install."
     exit
 fi
